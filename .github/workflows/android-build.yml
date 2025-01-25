@@ -3,7 +3,7 @@ name: Build and Publish Android
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*'  # 触发标签以 v 开头的推送事件
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'latest'
+          flutter-version: '3.10.1'  # 使用具体的 Flutter 版本
           channel: stable
 
       - name: Build with Flutter
