@@ -1,0 +1,60 @@
+name: Build and Publish Android and iOS
+
+on:
+  push:
+    tags:
+      - 'v*'  # 触发标签以 v 开头的推送事件
+
+jobs:
+  build:
+    runs-on: macos-latest  # 使用 macOS 以支持 iOS 构建
+
+    strategy:
+      matrix:
+        platform: [android, ios]  # 定义要构建的平台
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.1'  # 使用具体的 Flutter 版本
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get  # 安装依赖项
+
+      # Android 构建步骤
+      - name: Build Android APK
+        if: matrix.platform == 'android'
+        run: flutter build apk --release
+
+      # iOS 构建步骤
+      - name: Install CocoaPods dependencies
+        if: matrix.platform == 'ios'
+        run: |
+          cd ios
+          pod install
+          cd ..
+
+      - name: Build iOS App
+        if: matrix.platform == 'ios'
+        run: flutter build ios --release --no-codesign
+
+      # 上传 Android APK
+      - name: Upload Android APK
+        if: matrix.platform == 'android'
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-app
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      # 上传 iOS IPA
+      - name: Upload iOS IPA
+        if: matrix.platform == 'ios'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-app
+          path: build/ios/ipa/*.ipa
