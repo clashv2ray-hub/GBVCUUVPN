@@ -11,27 +11,23 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '2.18.5'
-        channel: stable
-        architecture: ARM64
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'latest'
+          channel: stable
 
-    - name: Install CocoaPods dependencies
-      run: |
-        cd ios
-        pod install
-        cd ..
+      - name: Install CocoaPods dependencies
+        run: |
+          cd ios
+          pod install
+          cd ..
 
-    - name: Build with Flutter
-      run: flutter build ios --release --no-codesign
+      - name: Build with Flutter
+        run: flutter build ios --release --no-codesign
 
-    - name: Upload IPA
-      uses: actions/upload-artifact@v3
-      with:
-        name: ios-app
-        path: build/ios/ipa/*.ipa
+      - name: Upload IPA
+        uses: actions/upload-art
