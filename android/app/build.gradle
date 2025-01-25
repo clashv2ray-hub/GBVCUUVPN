@@ -68,3 +68,12 @@ dependencies {
         }
     }
 }
+task cleanBuild(type: Delete) {
+    delete rootProject.buildDir
+}
+
+task rebuild(dependsOn: ['cleanBuild', 'assembleRelease']) {
+    doLast {
+        println 'Project cleaned and rebuilt.'
+    }
+}
