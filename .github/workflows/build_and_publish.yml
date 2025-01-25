@@ -1,60 +1,48 @@
-name: Build and Publish Android and iOS
+name: Build and Publish App
 
 on:
   push:
     tags:
-      - 'v*'  # 触发标签以 v 开头的推送事件
+      - 'v*'
 
 jobs:
   build:
-    runs-on: macos-latest  # 使用 macOS 以支持 iOS 构建
-
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: [android, ios]  # 定义要构建的平台
+        platform: [android]
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Flutter
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.10.1'  # 使用具体的 Flutter 版本
-          channel: stable
+          flutter-version: '3.x'
+          channel: 'stable'
 
       - name: Install dependencies
-        run: flutter pub get  # 安装依赖项
+        run: flutter pub get
 
-      # Android 构建步骤
-      - name: Build Android APK
-        if: matrix.platform == 'android'
+      - name: Build APK
         run: flutter build apk --release
 
-      # iOS 构建步骤
-      - name: Install CocoaPods dependencies
-        if: matrix.platform == 'ios'
-        run: |
-          cd ios
-          pod install
-          cd ..
-
-      - name: Build iOS App
-        if: matrix.platform == 'ios'
-        run: flutter build ios --release --no-codesign
-
-      # 上传 Android APK
-      - name: Upload Android APK
-        if: matrix.platform == 'android'
-        uses: actions/upload-artifact@v3
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: android-app
-          path: build/app/outputs/flutter-apk/app-release.apk
+          files: build/app/outputs/flutter-apk/app-release.apk
 
-      # 上传 iOS IPA
-      - name: Upload iOS IPA
-        if: matrix.platform == 'ios'
-        uses: actions/upload-artifact@v3
+      - name: Upload release APK
+        uses: actions/upload-release-asset@v1
         with:
-          name: ios-app
-          path: build/ios/ipa/*.ipa
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/app/outputs/flutter-apk/app-release.apk
+          asset_name: app-release.apk
+          asset_content_type: application/vnd.android.package-archive
