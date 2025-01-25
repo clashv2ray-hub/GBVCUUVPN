@@ -37,13 +37,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-     kotlinOptions {
+    kotlinOptions {
         jvmTarget = '1.8'
     }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
         main.jniLibs.srcDirs = ['libs', 'src/main/jniLibs']
+    } // 确保 sourceSets 块正确关闭
 
     defaultConfig {
         applicationId = "com.vpntunnel.vpnzeus"
