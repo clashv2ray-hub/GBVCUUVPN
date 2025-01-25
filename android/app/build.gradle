@@ -1,95 +1,72 @@
+plugins {
+    id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
 def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
+def localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
+    localPropertiesFile.withReader("UTF-8") { reader ->
         localProperties.load(reader)
     }
 }
 
-def flutterRoot = localProperties.getProperty('flutter.sdk')
-if (flutterRoot == null) {
-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
-}
-
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
 if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
+    flutterVersionCode = "1"
 }
 
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
+def flutterVersionName = localProperties.getProperty("flutter.versionName")
 if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
-
-// 使用声明性插件块
-plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'kotlin-parcelize'
+    flutterVersionName = "1.0"
 }
 
 android {
-    compileSdk 34
-    ndkVersion flutter.ndkVersion
+    namespace = "com.vpntunnel.vpnzeus"
+    compileSdk = 34
+    ndkVersion = flutter.ndkVersion
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        main.jniLibs.srcDirs = ['libs', 'src/main/jniLibs']
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
-        applicationId "com.vpntunnel.vpnzeus"
-        minSdkVersion 28
-        compileSdk 34
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
-
-        ndk {
-            if (!project.hasProperty('target-platform')) {
-                abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
-            } else {
-                def platforms = project.property('target-platform').split(',')
-                def platformMap = [
-                    'android-arm'  : 'armeabi-v7a',
-                    'android-arm64': 'arm64-v8a',
-                    'android-x86'  : 'x86',
-                    'android-x64'  : 'x86_64',
-                ]
-                abiFilters = platforms.stream().map({ e ->
-                    platformMap.containsKey(e) ? platformMap[e] : e
-                }).toArray()
-            }
-        }
+        applicationId = "com.vpntunnel.vpnzeus"
+        minSdk = 21
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutterVersionCode.toInteger()
+        versionName = flutterVersionName
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug  // TODO: Add your own signing config for release builds
+            signingConfig = signingConfigs.debug
         }
     }
 }
 
-// 使用新的方式引入 Flutter Gradle 插件
 flutter {
-    source '../..'
+    source = "../.."
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.jakewharton.timber:timber:5.0.1"
-    implementation 'androidx.work:work-runtime-ktx:2.7.1'
-    implementation 'androidx.preference:preference-ktx:1.2.0'
-    implementation "dnsjava:dnsjava:3.5.1"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(path: ':vpnLib')
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation('androidx.work:work-runtime') {
+        version {
+          strictly '2.7.0'
+      }
+    }
 }
