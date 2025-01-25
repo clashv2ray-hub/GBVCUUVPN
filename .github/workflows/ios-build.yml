@@ -1,0 +1,35 @@
+name: Build and Publish iOS
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '2.10.3'
+
+    - name: Install CocoaPods dependencies
+      run: |
+        cd ios
+        pod install
+        cd ..
+
+    - name: Build with Flutter
+      run: flutter build ios --release --no-codesign
+
+    - name: Upload IPA
+      uses: actions/upload-artifact@v3
+      with:
+        name: ios-app
+        path: build/ios/ipa/*.ipa
