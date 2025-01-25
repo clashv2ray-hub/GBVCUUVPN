@@ -6,7 +6,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 2.0.0+280
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"  # 更新为与 Flutter 3.10.1 兼容的 SDK 版本
+  sdk: ">=3.2.0 <4.0.0"  # 更新为与 Flutter 3.10.1 兼容的 SDK 版本
 
 dependencies:
   flutter:
