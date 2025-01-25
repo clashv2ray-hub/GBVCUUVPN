@@ -1,0 +1,68 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build and Publish Android and iOS
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up environment
+      if: matrix.os == 'ubuntu-latest'
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '2.10.3'
+
+    - name: Set up JDK
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+
+    - name: Cache Gradle packages
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/cache@v2
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: ${{ runner.os }}-gradle
+
+    - name: Build Android App
+      if: matrix.os == 'ubuntu-latest'
+      run: ./gradlew build
+
+    - name: Upload APK
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-app
+        path: app/build/outputs/apk/release/app-release.apk
+
+    - name: Set up Xcode
+      if: matrix.os == 'macos-latest'
+      run: sudo xcode-select --switch /Applications/Xcode_12.4.app
+
+    - name: Build with xcodebuild
+      if: matrix.os == 'macos-latest'
+      run: xcodebuild -workspace MyApp.xcworkspace -scheme MyApp -sdk iphoneos -configuration Release archive -archivePath $PWD/build/MyApp.xcarchive
+
+    - name: Export IPA
+      if: matrix.os == 'macos-latest'
+      run: xcodebuild -exportArchive -archivePath $PWD/build/MyApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath $PWD/build
+
+    - name: Upload IPA
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v3
+      with:
+        name: ios-app
+        path: build/*.ipa
