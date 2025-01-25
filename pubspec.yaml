@@ -3,51 +3,60 @@ description: ios/android vpn proxy client application.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.0.0+280
+# App Version
+version: 1.0.2+2
 
 environment:
-  sdk: ">=2.0.1 <4.0.0"  # 更新为与 Flutter 3.10.1 兼容的 SDK 版本
+  sdk: ">=3.4.3 <4.0.0"
 
+# App dependencies
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-  another_flushbar: ^1.12.30
-  cupertino_icons: ^1.0.5
-  dio: ^5.5.0+1
-  fluro: ^2.0.3
-  shared_preferences: ^2.0.15
-  webview_flutter: ^3.0.4
-  provider: ^6.0.3
-  flutter_svg: ^0.23.0+1 
-  flutter_screenutil: ^5.9.3 
-  flutter_swiper_plus: ^2.0.4 
-  flutter_login: ^5.0.0
-  flutter_easyrefresh: ^2.1.8
-  intl: ^0.18.1
-  path_provider: ^2.0.10 
-  crisp: ^0.3.1
-  modal_bottom_sheet: ^3.0.0-pre 
-  fluttertoast: ^8.0.9
-  meta: ^1.7.0
-  flutter_icmp_ping: ^3.1.0
-  url_launcher: ^6.1.11
-  synchronized: ^3.1.0
-  convert: ^3.1.1
-  crypto: ^3.0.3
-  get: ^4.6.5
-  google_fonts: ^5.0.0
-  sync_http: ^0.3.1
+
+  # Getx for state management
+  get: ^4.6.6
+
+  # Cupertino style icons
+  cupertino_icons: ^1.0.8
+
+  # For API Call
+  http: ^1.2.1
+
+  # Converting CSV data to List
+  csv: ^6.0.0
+
+  # For Lottie Animation
+  lottie: ^3.1.2
+
+  # For storing data (in local storage) 
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # For integrating ads
+  google_mobile_ads: ^5.1.0
+
+  # For firebase
+  firebase_core: ^3.2.0
+
+  # For Remote Config
+  firebase_remote_config: ^5.0.3
+
 
 dev_dependencies:
-  flutter_lints: ^2.0.1
   flutter_test:
     sdk: flutter
 
+  # Change package name  
+  # change_app_package_name: ^1.1.0
+
+  # Encourages good practices
+  flutter_lints: ^4.0.0
+
 flutter:
-  generate: true
+  # Enabling material design
   uses-material-design: true
+
   assets:
     - assets/flags/
     - assets/
